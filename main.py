@@ -88,7 +88,7 @@ async def verify_customer(request: VerifyRequest):
             )
     raise HTTPException(status_code=404, detail="Customer not found")
 
-@app.get("/customers/{name}")
+@app.get("/customers")
 def get_customer_info(name: str):
     person = database.get(name)
     if person:
