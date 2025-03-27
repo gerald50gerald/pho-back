@@ -91,7 +91,7 @@ async def verify_customer(request: VerifyRequest):
             )
     raise HTTPException(status_code=404, detail="Customer not found")
 
-@app.get("/customers")
+@app.post("/customers")
 async def get_customer_info(request: RequestName):
     print("printing")
     person = database.get(request.name)
@@ -106,3 +106,4 @@ async def get_customer_info(request: RequestName):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
