@@ -5,7 +5,20 @@ from datetime import date
 # Initialize FastAPI app
 app = FastAPI()
 
+# Pydantic model for request body
+class VerifyRequest(BaseModel):
+    name: str
+    account_number: str
 
+# Pydantic model for request body
+class RequestName(BaseModel):
+    name: str
+
+# Pydantic model for response
+class CustomerInfo(BaseModel):
+    name: str
+    account_number: str
+    deductible_amount: float
 
 # Sample insurance data
 database = {
@@ -56,16 +69,6 @@ customers = [
     Customer("Bob Smith", "111111111", 2000.0),
 ]
 
-# Pydantic model for request body
-class VerifyRequest(BaseModel):
-    name: str
-    account_number: str
-
-# Pydantic model for response
-class CustomerInfo(BaseModel):
-    name: str
-    account_number: str
-    deductible_amount: float
 
 # Endpoint for verification
 @app.post("/verify", response_model=CustomerInfo)
@@ -89,10 +92,12 @@ async def verify_customer(request: VerifyRequest):
     raise HTTPException(status_code=404, detail="Customer not found")
 
 @app.get("/customers")
-def get_customer_info(name: str):
-    person = database.get(name)
+async def get_customer_info(request: RequestName):
+    print("printing")
+    person = database.get(request.name)
     if person:
-        return {"name": name, "policy_number": person["policy_number"], "contract_details": person["contract_details"], "open_claims": person["open_claims"]}
+        return {"name": request.name, "policy_number": person["policy_number"], "contract_details": person["contract_details"], "open_claims": person["open_claims"]}
+    
     raise HTTPException(status_code=404, detail="Customer not found")
 
 
