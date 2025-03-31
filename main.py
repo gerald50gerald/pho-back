@@ -22,7 +22,7 @@ class CustomerInfo(BaseModel):
 
 # Sample insurance data
 database = {
-    "John Doe": {
+    "john doe": {
         "policy_number": "CAR123456",
         "contract_details": "This contract covers collision, comprehensive, and liability insurance. Roadside assistance is included. Deductible: $500. Coverage limit: $50,000 per accident.",
         "open_claims": [
@@ -38,7 +38,7 @@ database = {
             }
         ]
     },
-    "Jane Smith": {
+    "jane smith": {
         "policy_number": "CAR987654",
         "contract_details": "This contract covers liability and uninsured motorist protection. No collision or comprehensive coverage. Deductible: $1,000. Coverage limit: $25,000 per accident.",
         "open_claims": [
@@ -49,7 +49,7 @@ database = {
             }
         ]
     },
-    "Robert Brown": {
+    "robert brown": {
         "policy_number": "CAR567890",
         "contract_details": "Full coverage plan including collision, comprehensive, liability, and rental reimbursement. Deductible: $250. Coverage limit: $75,000 per accident.",
         "open_claims": []
@@ -64,9 +64,9 @@ class Customer:
 
 # Static data structure
 customers = [
-    Customer("John Doe", "123456789", 500.0),
-    Customer("Jane Doe", "987654321", 1000.0),
-    Customer("Bob Smith", "111111111", 2000.0),
+    Customer("john doe", "123456789", 500.0),
+    Customer("jane doe", "987654321", 1000.0),
+    Customer("bob smith", "111111111", 2000.0),
 ]
 
 
@@ -82,8 +82,9 @@ async def verify_customer(request: VerifyRequest):
     Returns:
     - CustomerInfo: Customer information if verified, otherwise raises an exception.
     """
+    req_name = request.name.lower()
     for customer in customers:
-        if customer.name == request.name and customer.account_number == request.account_number:
+        if customer.name == req_name and customer.account_number == request.account_number:
             return CustomerInfo(
                 name=customer.name,
                 account_number=customer.account_number,
@@ -94,9 +95,10 @@ async def verify_customer(request: VerifyRequest):
 @app.post("/customers")
 async def get_customer_info(request: RequestName):
     print("printing")
-    person = database.get(request.name)
+    req_name = request.name.lower()
+    person = database.get(req_name)
     if person:
-        return {"name": request.name, "policy_number": person["policy_number"], "contract_details": person["contract_details"], "open_claims": person["open_claims"]}
+        return {"name": req_name, "policy_number": person["policy_number"], "contract_details": person["contract_details"], "open_claims": person["open_claims"]}
     
     raise HTTPException(status_code=404, detail="Customer not found")
 
